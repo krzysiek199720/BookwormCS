@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookworm.Data;
 
-public class DataContext : IdentityDbContext<AppUser, AppRole, string>
+public class DataContext : IdentityDbContext<AppUser>
 {
-    public DataContext(DbContextOptions options) : base(options)
+    public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
     }
-
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
