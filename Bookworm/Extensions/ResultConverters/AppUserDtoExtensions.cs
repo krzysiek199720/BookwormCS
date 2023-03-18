@@ -10,7 +10,8 @@ public static class AppUserDtoExtensions
         return new LoginDto
         {
             Token = token,
-            Email = appUser.Email ?? ""
+            Email = appUser.Email ?? "",
+            Username = appUser.UserName ?? "",
         };
     }
 }

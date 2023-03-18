@@ -1,4 +1,5 @@
-﻿using Bookworm.Data;
+﻿using Bookworm.Controllers.Services.Interfaces;
+using Bookworm.Data;
 using Bookworm.DTO;
 using Bookworm.DTO.Results;
 using Bookworm.Entities.Auth;
@@ -12,28 +13,44 @@ namespace Bookworm.Controllers;
 
 public class AuthController : ApiBaseController
 {
-    private readonly ITokenService _tokenService;
-    private readonly DataContext _dataContext;
-    private readonly UserManager<AppUser> _userManager;
+    public IAuthService AuthService { get; }
 
-    public AuthController(ITokenService tokenService, DataContext dataContext, UserManager<AppUser> userManager)
+    public AuthController(IAuthService authService)
     {
-        _tokenService = tokenService;
-        _dataContext = dataContext;
-        _userManager = userManager;
+        AuthService = authService;
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<LoginDto>> Login(LoginRequest loginRequest)
     {
-        var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+        var user = AuthService.GetUserByEmail(loginRequest.Email);
         if (user == null)
-            return Unauthorized("Invalid credentials");
-        var result = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
+            return Unauthorized("Invalid login info");
+        var result = await AuthService.CheckPassword(user, loginRequest.Password);
         if(!result) 
-            return Unauthorized("Invalid credentials");
+            return Unauthorized("Invalid login info");
 
-        var token = await _tokenService.CreateToken(user);
+        var token = await AuthService.CreateToken(user);
+        
+        return user.ToLoginDto(token);
+    }
+    
+    [HttpPost("register")]
+    public async Task<ActionResult<LoginDto>> Register(RegisterRequest registerRequest)
+    {
+        var checkUser = AuthService.GetUserByEmail(registerRequest.Email);
+        if (checkUser != null)
+            return BadRequest("Email taken");
+
+        var user = new AppUser { Email = registerRequest.Email, UserName = registerRequest.Username};
+        var result = await AuthService.CreateUser(user, registerRequest.Password);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
+        var roleResult = await AuthService.AddRole(user, "User");
+        if (!roleResult.Succeeded)
+            return BadRequest(roleResult.Errors);
+        
+        var token = await AuthService.CreateToken(user);
         
         return user.ToLoginDto(token);
     }
