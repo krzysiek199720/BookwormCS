@@ -10,6 +10,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
     {
         builder.Property(b => b.ISBN)
             .HasMaxLength(13);
+        builder.HasIndex(b => b.ISBN).IsUnique();
 
         builder.HasMany(b => b.Authors)
             .WithMany(a => a.Books);

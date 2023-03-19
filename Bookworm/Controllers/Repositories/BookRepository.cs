@@ -24,4 +24,20 @@ public class BookRepository : IBookRepository
             .Include(x => x.Publisher)
             .FirstOrDefault(x => x.Id == id);
     }
+
+    public IQueryable<Book> GetBookQueryable()
+    {
+        return Context.Books.AsQueryable();
+    }
+
+
+    public void CreateBook(Book book)
+    {
+        Context.Books.Add(book);
+    }
+
+    public int SaveChanges()
+    {
+        return Context.SaveChanges();
+    }
 }

@@ -24,4 +24,29 @@ public static class BookDtoExtensions
             FanCount = book.Fans.Count(),
         };
     }
+    public static BookMinimalDto ToMinimalBookDto(this Book book)
+    {
+        return new BookMinimalDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            ReleaseYear = book.ReleaseYear,
+            CoverUrl = book.CoverUrl,
+            Authors = book.Authors.Select(x => new MinimalDataDto{Id = x.Id, Name = string.IsNullOrEmpty(x.FirstName) ? x.LastName : $"{x.FirstName} {x.LastName}"}),
+        };
+    }
+    
+    public static BookDetailsDto ToBookDetailsDto(this Book book)
+    {
+        return new BookDetailsDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            PageCount = book.PageCount,
+            ISBN = book.ISBN,
+            About = book.About,
+            ReleaseYear = book.ReleaseYear,
+            CoverUrl = book.CoverUrl,
+        };
+    }
 }
