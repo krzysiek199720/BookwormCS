@@ -10,5 +10,5 @@ public class Author
     public string About { get; set;}
     public string PhotoUrl { get; set;}
     
-    public virtual IQueryable<Book> Books { get; set; }
+    public virtual ICollection<Book> Books { get; set; }
 }

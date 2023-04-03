@@ -8,7 +8,7 @@ public class Series
     public string Name { get; set; }
     public string About { get; set; }
 
-    public virtual IQueryable<Book> Books { get; set; }
-    public virtual IQueryable<AppUser> Fans { get; set; }
+    public virtual ICollection<Book> Books { get; set; }
+    public virtual ICollection<AppUser> Fans { get; set; }
     
 }

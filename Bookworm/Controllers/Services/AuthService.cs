@@ -19,6 +19,11 @@ public class AuthService : IAuthService
         TokenService = tokenService;
     }
 
+    public AppUser Get(string userId)
+    {
+        return UserManager.Users.FirstOrDefault(u => u.Id == userId);
+    }
+    
     public AppUser GetUserByEmail(string email)
     {
         return UserManager.Users.FirstOrDefault(u => u.Email != null && u.Email.Equals(email));

@@ -4,10 +4,12 @@ using Bookworm.Controllers.Services.Interfaces;
 using Bookworm.DTO;
 using Bookworm.DTO.Requests.Book;
 using Bookworm.DTO.Results;
+using Bookworm.Entities.Auth;
 using Bookworm.Entities.BookData;
 using Bookworm.Extensions.ResultConverters;
 using Bookworm.Helpers;
 using Microsoft.EntityFrameworkCore;
+using HostingEnvironmentExtensions = Microsoft.AspNetCore.Hosting.HostingEnvironmentExtensions;
 
 namespace Bookworm.Controllers.Services;
 
@@ -18,19 +20,22 @@ public class BookService : IBookService
     public IPublisherRepository PublisherRepository { get; }
     public IAuthorRepository AuthorRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
+    public IAuthService AuthService { get; }
 
     public BookService(IBookRepository bookRepository,
         ISeriesRepository seriesRepository,
         IPublisherRepository publisherRepository,
         IAuthorRepository authorRepository,
-        ICategoryRepository categoryRepository
-        )
+        ICategoryRepository categoryRepository, 
+        IAuthService authService
+    )
     {
         BookRepository = bookRepository;
         SeriesRepository = seriesRepository;
         PublisherRepository = publisherRepository;
         AuthorRepository = authorRepository;
         CategoryRepository = categoryRepository;
+        AuthService = authService;
     }
     
     public BookDto GetBookById(int id)
@@ -111,7 +116,7 @@ public class BookService : IBookService
         var authors = AuthorRepository.FindAll(bookAuthors.AuthorIds);
         if (authors.Count() != bookAuthors.AuthorIds.Count) return false;
 
-        book.Authors = authors;
+        book.Authors = authors.ToList();
 
         BookRepository.SaveChanges();
         
@@ -125,10 +130,36 @@ public class BookService : IBookService
         var categories = CategoryRepository.FindAll(bookCategories.AuthorIds);
         if (categories.Count() != bookCategories.AuthorIds.Count) return false;
 
-        book.Categories = categories;
+        book.Categories = categories.ToList();
 
         BookRepository.SaveChanges();
         
+        return true;
+    }
+
+    public bool SetBookFan(int bookId, string userId)
+    {
+        var user = AuthService.Get(userId);
+        if (user == null) return false;
+        var book = BookRepository.Get(bookId);
+        if (book == null) return false;
+
+        book.Fans.Add(user);
+
+        BookRepository.SaveChanges();
+        return true;
+    }
+    
+    public bool RemoveBookFan(int bookId, string userId)
+    {
+        var user = AuthService.Get(userId);
+        if (user == null) return false;
+        var book = BookRepository.Get(bookId);
+        if (book == null) return false;
+
+        book.Fans.Remove(user);
+
+        BookRepository.SaveChanges();
         return true;
     }
 }

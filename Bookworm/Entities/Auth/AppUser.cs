@@ -5,6 +5,6 @@ namespace Bookworm.Entities.Auth;
 
 public class AppUser : IdentityUser
 {
-    public virtual IQueryable<Book> LikedBooks { get; set; }
-    public virtual IQueryable<Series> LikedSeries { get; set; }
+    public virtual ICollection<Book> LikedBooks { get; set; }
+    public virtual ICollection<Series> LikedSeries { get; set; }
 }

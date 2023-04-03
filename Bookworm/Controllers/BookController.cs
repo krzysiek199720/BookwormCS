@@ -1,6 +1,7 @@
 ﻿using Bookworm.Controllers.Services.Interfaces;
 using Bookworm.DTO.Requests.Book;
 using Bookworm.DTO.Results;
+using Bookworm.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -78,6 +79,16 @@ public class BookController : ApiBaseController
     public async Task<ActionResult> UpdateCategories(int bookId, BookCategoriesUpdateRequest bookCategories)
     {
         var result = BookService.UpdateBookCategories(bookId, bookCategories);
+        if (!result)
+            return NotFound();
+        return NoContent();
+    }
+    
+    [HttpPut("{bookId:int}/fan")]
+    [Authorize]
+    public async Task<ActionResult> UpdateCategories(int bookId)
+    {
+        var result = BookService.SetBookFan(bookId, User.GetUserId());
         if (!result)
             return NotFound();
         return NoContent();

@@ -19,7 +19,7 @@ public class Book
     public Series Series { get; set; }
     public Publisher Publisher { get; set; }
 
-    public virtual IQueryable<Author> Authors { get; set; }
-    public virtual IQueryable<Category> Categories { get; set; }
-    public virtual IQueryable<AppUser> Fans { get; set; }
+    public virtual ICollection<Author> Authors { get; set; }
+    public virtual ICollection<Category> Categories { get; set; }
+    public virtual ICollection<AppUser> Fans { get; set; }
 }

@@ -7,6 +7,7 @@ namespace Bookworm.Controllers.Services.Interfaces;
 
 public interface IAuthService
 {
+    public AppUser Get(string userId);
     public AppUser GetUserByEmail(string email);
     public Task<bool> CheckPassword(AppUser user, string password);
     public Task<string> CreateToken(AppUser user);
