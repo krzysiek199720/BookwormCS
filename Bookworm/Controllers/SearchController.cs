@@ -8,17 +8,24 @@ namespace Bookworm.Controllers;
 
 public class SearchController : ApiBaseController
 {
-    public IBookService BookService { get; }
+    public ISearchService SearchService { get; }
 
-    public SearchController(IBookService bookService)
+    public SearchController(ISearchService searchService)
     {
-        BookService = bookService;
+        SearchService = searchService;
     }
 
     [HttpGet]
     public async Task<ActionResult<PagedResult<BookMinimalDto>>> Search([FromQuery] SearchRequest searchParams)
     {
-        var result = BookService.Search(searchParams);
+        var result = SearchService.SearchBook(searchParams);
+        return result;
+    }
+    
+    [HttpGet("author")]
+    public async Task<ActionResult<PagedResult<MinimalAuthorDto>>> SearchAuthor([FromQuery] SearchRequest searchParams)
+    {
+        var result = SearchService.SearchAuthor(searchParams);
         return result;
     }
 }

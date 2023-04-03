@@ -25,7 +25,12 @@ public class BookRepository : IBookRepository
             .FirstOrDefault(x => x.Id == id);
     }
 
-    public IQueryable<Book> GetBookQueryable()
+    public Book Get(int id)
+    {
+        return Context.Books.FirstOrDefault(x => x.Id == id);
+    }
+
+    public IQueryable<Book> GetQueryable()
     {
         return Context.Books.AsQueryable();
     }

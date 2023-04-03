@@ -2,7 +2,7 @@
 using Bookworm.Controllers.Repositories.Interfaces;
 using Bookworm.Controllers.Services.Interfaces;
 using Bookworm.DTO;
-using Bookworm.DTO.Book;
+using Bookworm.DTO.Requests.Book;
 using Bookworm.DTO.Results;
 using Bookworm.Entities.BookData;
 using Bookworm.Extensions.ResultConverters;
@@ -14,10 +14,23 @@ namespace Bookworm.Controllers.Services;
 public class BookService : IBookService
 {
     public IBookRepository BookRepository { get; }
+    public ISeriesRepository SeriesRepository { get; }
+    public IPublisherRepository PublisherRepository { get; }
+    public IAuthorRepository AuthorRepository { get; }
+    public ICategoryRepository CategoryRepository { get; }
 
-    public BookService(IBookRepository bookRepository)
+    public BookService(IBookRepository bookRepository,
+        ISeriesRepository seriesRepository,
+        IPublisherRepository publisherRepository,
+        IAuthorRepository authorRepository,
+        ICategoryRepository categoryRepository
+        )
     {
         BookRepository = bookRepository;
+        SeriesRepository = seriesRepository;
+        PublisherRepository = publisherRepository;
+        AuthorRepository = authorRepository;
+        CategoryRepository = categoryRepository;
     }
     
     public BookDto GetBookById(int id)
@@ -27,27 +40,6 @@ public class BookService : IBookService
 
         return result.ToBookDto();
     }
-
-    public PagedResult<BookMinimalDto> Search(SearchRequest searchParams)
-    {
-        var itemsToCompare = searchParams.SearchString.Split(null);
-
-        var booKQueryable = BookRepository.GetBookQueryable();
-        booKQueryable = booKQueryable.Where(x =>
-                itemsToCompare.Any(c => x.Title.Contains(c))
-                || itemsToCompare.Any(c => x.ISBN.Contains(c))
-                || itemsToCompare.Any(c => x.Series.Name.Contains(c))
-                || itemsToCompare.Any(c => x.Publisher.Name.Contains(c))
-                || itemsToCompare.Any(c => x.Authors.Any(a => a.LastName.Contains(c) || a.FirstName.Contains(c)))
-                || itemsToCompare.Any(c => x.Categories.Any(cat => cat.Name.Contains(c)))
-            );
-        booKQueryable.Include(x => x.Authors);
-
-        var resultQuery = booKQueryable.Distinct().Select(x => x.ToMinimalBookDto());
-
-        return PagedResult<BookMinimalDto>.CreatePagedResult(resultQuery, searchParams.PageNumber, searchParams.PageSize);
-    }
-
 
     public BookDetailsDto CreateBook(BookDetailsRequest bookDetails)
     {
@@ -65,5 +57,78 @@ public class BookService : IBookService
         BookRepository.SaveChanges();
 
         return book.ToBookDetailsDto();
+    }
+    
+    public bool UpdateBook(int bookId, BookDetailsRequest bookDetails)
+    {
+        var book = BookRepository.Get(bookId);
+        if (book == null) return false;
+        
+        book.Title = bookDetails.Title;
+        book.PageCount = bookDetails.PageCount;
+        book.ISBN = bookDetails.ISBN;
+        book.About = bookDetails.About;
+        book.ReleaseYear = bookDetails.ReleaseYear;
+        book.CoverUrl = bookDetails.CoverUrl;
+
+        BookRepository.SaveChanges();
+
+        return true;
+    }
+
+    public bool UpdateBookSeries(int bookId, BookSeriesUpdateRequest bookSeriesUpdateRequest)
+    {
+        var book = BookRepository.Get(bookId);
+        if (book == null) return false;
+        var series = SeriesRepository.Get(bookSeriesUpdateRequest.SeriesId);
+        if (series == null) return false;
+
+        book.Series = series;
+
+        BookRepository.SaveChanges();
+        
+        return true;
+    }
+    
+    public bool UpdateBookPublisher(int bookId, BookPublisherUpdateRequest bookPublisherUpdateRequest)
+    {
+        var book = BookRepository.Get(bookId);
+        if (book == null) return false;
+        var publisher = PublisherRepository.Get(bookPublisherUpdateRequest.PublisherId);
+        if (publisher == null) return false;
+
+        book.Publisher = publisher;
+
+        BookRepository.SaveChanges();
+        
+        return true;
+    }
+    
+    public bool UpdateBookAuthors(int bookId, BookAuthorsUpdateRequest bookAuthors)
+    {
+        var book = BookRepository.Get(bookId);
+        if (book == null) return false;
+        var authors = AuthorRepository.FindAll(bookAuthors.AuthorIds);
+        if (authors.Count() != bookAuthors.AuthorIds.Count) return false;
+
+        book.Authors = authors;
+
+        BookRepository.SaveChanges();
+        
+        return true;
+    }
+    
+    public bool UpdateBookCategories(int bookId, BookCategoriesUpdateRequest bookCategories)
+    {
+        var book = BookRepository.Get(bookId);
+        if (book == null) return false;
+        var categories = CategoryRepository.FindAll(bookCategories.AuthorIds);
+        if (categories.Count() != bookCategories.AuthorIds.Count) return false;
+
+        book.Categories = categories;
+
+        BookRepository.SaveChanges();
+        
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Bookworm.DTO.Book;
+﻿namespace Bookworm.DTO.Requests.Book;
 
 public class BookDetailsRequest
 {

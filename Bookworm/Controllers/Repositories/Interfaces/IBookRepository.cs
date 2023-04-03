@@ -2,10 +2,9 @@
 
 namespace Bookworm.Controllers.Repositories.Interfaces;
 
-public interface IBookRepository : IRepository
+public interface IBookRepository : IRepository<Book>
 {
     public Book GetBookWithIncludes(int id);
-    public IQueryable<Book> GetBookQueryable();
-    
+
     public void CreateBook(Book book);
 }
