@@ -28,4 +28,18 @@ public class SearchController : ApiBaseController
         var result = SearchService.SearchAuthor(searchParams);
         return result;
     }
+    
+    [HttpGet("series")]
+    public async Task<ActionResult<PagedResult<MinimalDataDto>>> SearchSeries([FromQuery] SearchRequest searchParams)
+    {
+        var result = SearchService.SearchSeries(searchParams);
+        return result;
+    }
+    
+    [HttpGet("category")]
+    public async Task<ActionResult<PagedResult<MinimalDataDto>>> SearchCategory([FromQuery] SearchRequest searchParams)
+    {
+        var result = SearchService.SearchCategory(searchParams);
+        return result;
+    }
 }

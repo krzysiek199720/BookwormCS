@@ -65,8 +65,38 @@ public class SearchService : ISearchService
             || itemsToCompare.Any(c => x.Books.Any(b => b.Series.Name.Contains(c)))
         );
 
-        var resultQuery = queryable.Distinct().Select(x => x.ToMinimalBookDto());
+        var resultQuery = queryable.Distinct().Select(x => x.ToMinimalDto());
 
         return PagedResult<MinimalAuthorDto>.CreatePagedResult(resultQuery, searchParams.PageNumber, searchParams.PageSize);
+    }
+
+    public PagedResult<MinimalDataDto> SearchSeries(SearchRequest searchParams)
+    {
+        var itemsToCompare = searchParams.SearchString.Split(null);
+
+        var queryable = SeriesRepository.GetQueryable();
+        queryable = queryable.Where(x =>
+            itemsToCompare.Any(c => x.Name.Contains(c))
+            || itemsToCompare.Any(c => x.Books.Any(b => b.Title.Contains(c)))
+            || itemsToCompare.Any(c => x. Books.Any(b => b.Authors.Any(a => a.FirstName.Contains(c) || a.LastName.Contains(c))))
+        );
+
+        var resultQuery = queryable.Distinct().Select(x => x.ToMinimalDto());
+
+        return PagedResult<MinimalDataDto>.CreatePagedResult(resultQuery, searchParams.PageNumber, searchParams.PageSize);
+    }
+    
+    public PagedResult<MinimalDataDto> SearchCategory(SearchRequest searchParams)
+    {
+        var itemsToCompare = searchParams.SearchString.Split(null);
+
+        var queryable = SeriesRepository.GetQueryable();
+        queryable = queryable.Where(x =>
+            itemsToCompare.Any(c => x.Name.Contains(c))
+        );
+
+        var resultQuery = queryable.Distinct().Select(x => x.ToMinimalDto());
+
+        return PagedResult<MinimalDataDto>.CreatePagedResult(resultQuery, searchParams.PageNumber, searchParams.PageSize);
     }
 }

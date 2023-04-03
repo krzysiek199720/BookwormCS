@@ -10,4 +10,6 @@ public interface ISearchService
 {
     public PagedResult<BookMinimalDto> SearchBook(SearchRequest searchParams);
     public PagedResult<MinimalAuthorDto> SearchAuthor(SearchRequest searchParams);
+    public PagedResult<MinimalDataDto> SearchSeries(SearchRequest searchParams);
+    public PagedResult<MinimalDataDto> SearchCategory(SearchRequest searchParams);
 }

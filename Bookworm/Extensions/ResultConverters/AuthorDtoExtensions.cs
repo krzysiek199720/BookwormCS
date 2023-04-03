@@ -6,7 +6,7 @@ namespace Bookworm.Extensions.ResultConverters;
 
 public static class AuthorDtoExtensions
 {
-   public static MinimalAuthorDto ToMinimalBookDto(this Author author)
+   public static MinimalAuthorDto ToMinimalDto(this Author author)
     {
         return new MinimalAuthorDto
         {
