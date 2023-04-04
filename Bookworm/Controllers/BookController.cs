@@ -84,11 +84,21 @@ public class BookController : ApiBaseController
         return NoContent();
     }
     
-    [HttpPut("{bookId:int}/fan")]
+    [HttpPut("{bookId:int}/like")]
     [Authorize]
-    public async Task<ActionResult> UpdateCategories(int bookId)
+    public async Task<ActionResult> SetFanStatus(int bookId)
     {
         var result = BookService.SetBookFan(bookId, User.GetUserId());
+        if (!result)
+            return NotFound();
+        return NoContent();
+    }
+    
+    [HttpPut("{bookId:int}/unlike")]
+    [Authorize]
+    public async Task<ActionResult> UnsetFanStatus(int bookId)
+    {
+        var result = BookService.RemoveBookFan(bookId, User.GetUserId());
         if (!result)
             return NotFound();
         return NoContent();
