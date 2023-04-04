@@ -7,7 +7,7 @@ public class BookDto
     public int PageCount { get; set; }
     public string ISBN { get; set; }
     public string About { get; set; }
-    public int ReleaseYear { get; set; }
+    public int? ReleaseYear { get; set; }
     public string CoverUrl { get; set; }
 
     public IEnumerable<MinimalDataDto> Authors { get; set; }

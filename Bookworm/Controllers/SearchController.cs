@@ -19,6 +19,9 @@ public class SearchController : ApiBaseController
     public async Task<ActionResult<PagedResult<BookMinimalDto>>> Search([FromQuery] SearchRequest searchParams)
     {
         var result = SearchService.SearchBook(searchParams);
+        
+        Response.AddPaginationHeader(new PaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages));
+        
         return result;
     }
     
@@ -26,6 +29,9 @@ public class SearchController : ApiBaseController
     public async Task<ActionResult<PagedResult<MinimalAuthorDto>>> SearchAuthor([FromQuery] SearchRequest searchParams)
     {
         var result = SearchService.SearchAuthor(searchParams);
+        
+        Response.AddPaginationHeader(new PaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages));
+        
         return result;
     }
     
@@ -33,6 +39,9 @@ public class SearchController : ApiBaseController
     public async Task<ActionResult<PagedResult<MinimalDataDto>>> SearchSeries([FromQuery] SearchRequest searchParams)
     {
         var result = SearchService.SearchSeries(searchParams);
+        
+        Response.AddPaginationHeader(new PaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages));
+        
         return result;
     }
     
@@ -40,6 +49,19 @@ public class SearchController : ApiBaseController
     public async Task<ActionResult<PagedResult<MinimalDataDto>>> SearchCategory([FromQuery] SearchRequest searchParams)
     {
         var result = SearchService.SearchCategory(searchParams);
+        
+        Response.AddPaginationHeader(new PaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages));
+        
+        return result;
+    }
+    
+    [HttpGet("publisher")]
+    public async Task<ActionResult<PagedResult<MinimalDataDto>>> SearchPublisher([FromQuery] SearchRequest searchParams)
+    {
+        var result = SearchService.SearchPublisher(searchParams);
+        
+        Response.AddPaginationHeader(new PaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages));
+        
         return result;
     }
 }

@@ -8,6 +8,9 @@ public class PublisherConfiguration : IEntityTypeConfiguration<Publisher>
 {
     public void Configure(EntityTypeBuilder<Publisher> builder)
     {
+        builder.Property(x => x.Name).HasMaxLength(25);
+        builder.Property(x => x.About).HasMaxLength(50).IsRequired(false);
+        
         builder.HasMany(p => p.Books)
             .WithOne(b => b.Publisher)
             .HasForeignKey(b => b.PublisherId)

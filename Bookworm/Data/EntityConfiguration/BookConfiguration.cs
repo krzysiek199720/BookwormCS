@@ -12,6 +12,12 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             .HasMaxLength(13);
         builder.HasIndex(b => b.ISBN).IsUnique();
 
+        builder.Property(x => x.Title).HasMaxLength(100);
+        builder.Property(x => x.PageCount).HasDefaultValue(0);
+        builder.Property(x => x.About).IsRequired(false).HasMaxLength(500);
+        builder.Property(x => x.ReleaseYear).IsRequired(false);
+        
+
         builder.HasMany(b => b.Authors)
             .WithMany(a => a.Books);
 
@@ -21,11 +27,13 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.HasOne(b => b.Series)
             .WithMany(s => s.Books)
             .HasForeignKey(b => b.SeriesId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired(false);
         
         builder.HasOne(b => b.Publisher)
             .WithMany(p => p.Books)
             .HasForeignKey(b => b.PublisherId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired(false);
     }
 }
